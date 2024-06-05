@@ -22,9 +22,9 @@ public class Rook extends Piece {
     public Rook(boolean white, boolean playerColor) {
         super(white, playerColor); // call parent constructor
         if (white) { // set display image based on piece color
-            icon = new ImageIcon("img/w_rook.png");
+            icon = new ImageIcon(getClass().getResource("/img/w_rook.png"));
         } else {
-            icon = new ImageIcon("img/b_rook.png");
+            icon = new ImageIcon(getClass().getResource("/img/b_rook.png"));
         }
         Image curr = icon.getImage().getScaledInstance(Square.SIZE, Square.SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon(curr);

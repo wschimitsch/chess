@@ -65,8 +65,9 @@ public class TitleScreen extends JFrame {
             }
         }
         // Set the Title Screen icon
-        ImageIcon titleIcon = new ImageIcon("/img/chess.png");
-        System.out.println(titleIcon.getDescription());
+        ImageIcon titleIcon = new ImageIcon(getClass().getResource("/img/chess.png"));
+        // JLabel lab = new JLabel(titleIcon);
+        // add(lab);
         setIconImage(titleIcon.getImage());
         // Creating Title Panel and components (first row)
         titleLabel = new JLabel("Chess");
@@ -111,8 +112,8 @@ public class TitleScreen extends JFrame {
         add(spots[3]);
         // Creating buttons for color selection (third row)
         // Use rook icons for these buttons to denote piece colors
-        ImageIcon white_rook = new ImageIcon("img/w_rook.png");
-        ImageIcon black_rook = new ImageIcon("img/b_rook.png");
+        ImageIcon white_rook = new ImageIcon(getClass().getResource("/img/w_rook.png"));
+        ImageIcon black_rook = new ImageIcon(getClass().getResource("/img/b_rook.png"));
         // Get white image icons
         Image temp = white_rook.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         whiteIcon = new ImageIcon(temp);

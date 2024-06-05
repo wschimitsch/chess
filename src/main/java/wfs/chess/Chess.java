@@ -7,6 +7,7 @@
  * TitleScreen, Square, and Piece.
  *-----------------------------------------------------------*/
 package wfs.chess;
+
 import wfs.chess.board.TitleScreen;
 
 public class Chess {

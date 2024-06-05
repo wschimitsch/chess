@@ -50,7 +50,7 @@ public class Game extends JFrame {
     /*
      * Size of the chess board. A traditional board is 8x8.
      */
-    public final int BOARD_SIZE = 8;
+    private final int BOARD_SIZE = 8;
     /*
      * Array to hold the pieces on the board.
      */
@@ -85,15 +85,15 @@ public class Game extends JFrame {
     /*
      * Timers for both players.
      */
-    Timer whiteTimer;
-    Timer blackTimer;
+    private Timer whiteTimer;
+    private Timer blackTimer;
     /* 
      * Swing components for the timers.
      */
-    JLabel whiteTimerLabel;
-    JPanel whitePanel;
-    JLabel blackTimerLabel;
-    JPanel blackPanel;
+    private JLabel whiteTimerLabel;
+    private JPanel whitePanel;
+    private JLabel blackTimerLabel;
+    private JPanel blackPanel;
     /*
      * JPanel to hold the timers and borders.
      */
@@ -134,9 +134,9 @@ public class Game extends JFrame {
         setAlwaysOnTop(true);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
         // Set the Game icon
-        ImageIcon icon = new ImageIcon("img/chess.png");
+        ImageIcon icon = new ImageIcon(getClass().getResource("/img/chess.png"));
         setIconImage(icon.getImage());
         // Initialize the player color
         isPlayerWhite = playerColor;
@@ -456,7 +456,7 @@ public class Game extends JFrame {
                     blackWinLabel.setFont(new Font("Arial", Font.BOLD, 32));
                     blackWinLabel.setForeground(Color.WHITE);
                     // Display an image of a King
-                    ImageIcon i = new ImageIcon("img/b_king.png");
+                    ImageIcon i = new ImageIcon(getClass().getResource("/img/b_king.png"));
                     Image curr = i.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
                     i = new ImageIcon(curr);
                     JLabel king = new JLabel(i);
@@ -471,7 +471,7 @@ public class Game extends JFrame {
                     whiteWinLabel = new JLabel("White Wins!", SwingConstants.CENTER);
                     whiteWinLabel.setFont(new Font("Arial", Font.BOLD, 32));
                     // Display an image of a King
-                    ImageIcon i = new ImageIcon("img/w_king.png");
+                    ImageIcon i = new ImageIcon(getClass().getResource("/img/w_king.png"));
                     Image curr = i.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
                     i = new ImageIcon(curr);
                     JLabel king = new JLabel(i);

@@ -18,9 +18,9 @@ public class Queen extends Piece {
     public Queen(boolean white, boolean playerColor) {
         super(white, playerColor); // call parent constructor
         if (white) { // set display image based on piece color
-            icon = new ImageIcon("img/w_queen.png");
+            icon = new ImageIcon(getClass().getResource("/img/w_queen.png"));
         } else {
-            icon = new ImageIcon("img/b_queen.png");
+            icon = new ImageIcon(getClass().getResource("/img/b_queen.png"));
         }
         Image curr = icon.getImage().getScaledInstance(Square.SIZE, Square.SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon(curr);

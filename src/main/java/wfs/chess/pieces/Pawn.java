@@ -23,9 +23,9 @@ public class Pawn extends Piece {
     public Pawn(boolean white, boolean playerColor) {
         super(white, playerColor); // call parent constructor
         if (white) { // set display image based on piece color
-            icon = new ImageIcon("img/w_pawn.png");
+            icon = new ImageIcon(getClass().getResource("/img/w_pawn.png"));
         } else {
-            icon = new ImageIcon("img/b_pawn.png");
+            icon = new ImageIcon(getClass().getResource("/img/b_pawn.png"));
         }
         Image curr = icon.getImage().getScaledInstance(Square.SIZE, Square.SIZE, Image.SCALE_SMOOTH);
         icon = new ImageIcon(curr);
