@@ -37,35 +37,34 @@ public class King extends Piece {
      */
     @Override
     public boolean move(Square start, Square dest, Square[][] squares) {
-        if (!super.move(start, dest, squares)) {
+        if (!isMove(start, dest, squares)) {
             return false;
         } 
-        if (!hasMoved && isValidCastling(squares, start, dest)) {
+        if (!hasMoved && isValidCastling(start, dest, squares)) {
             return true;
+        }
+        return this.makeMove(start, dest); 
+    }
+
+    @Override
+    public boolean isMove(Square start, Square dest, Square[][] squares) {
+        if (!super.isMove(start, dest, squares)) {
+            return false;
         }
         if ((dest.px > start.px+1) || (dest.px < start.px-1) || (dest.py > start.py+1 || dest.py < start.py-1)) { // cannot move King more than one square
             return false;
         }
-        if (dest.getPiece() == null) { // if the destination square is empty, move to it
-            if (dest.checkForKing(squares, start.px, start.py)) { // if there is a King neighboring this square it is an invalid move
-                return false;
-            }
-            dest.setPiece(this);
-            start.setPiece(null);
-            return true;
-        } else { // otherwise take the piece on it
-            kill(dest.getPiece(), dest);
-            dest.setPiece(this);
-            start.setPiece(null);
-            return true;
+        if (dest.checkForKing(squares, start.px, start.py)) { // if there is a King neighboring this square it is an invalid move
+            return false;
         }
+        return true; 
     }
     /*
      * isValidCastling function to implement castling feature, whereby the King
      * can move two squares to safety while the rook on the respective side the
      * King is castling moves to the other side of King. 
      */
-    public boolean isValidCastling(Square[][] squares, Square start, Square dest) {
+    public boolean isValidCastling(Square start, Square dest, Square[][] squares) {
         if (dest.px == start.px+2) { // rook would be on 7th column
             Piece pc = squares[start.py][7].getPiece();
             if (pc instanceof Rook && !pc.hasMoved && pc.move(squares[start.py][7], squares[start.py][dest.px-1], squares)) {
@@ -97,5 +96,3 @@ public class King extends Piece {
         return false;
     }
 }
-
-// TODO: implement castling and disallowing moves next to other kings

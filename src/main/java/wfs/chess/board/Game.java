@@ -56,11 +56,8 @@ public class Game extends JFrame {
      */
     private MoveListener ml;
     /*
-     * Color of the Player, or Player 1.
-     */
-    protected boolean isPlayerWhite;
-    /*
-     * Keep track of whose turn it is.
+     * Keep track of whose turn it is:
+     * true = white's turn, false = black's turn.
      */
     protected boolean turn = true;
     /*
@@ -139,15 +136,14 @@ public class Game extends JFrame {
         ImageIcon icon = new ImageIcon(getClass().getResource("/img/chess.png"));
         setIconImage(icon.getImage());
         // Initialize the player color
-        isPlayerWhite = playerColor;
-        if (!isPlayerWhite) {
+        if (!playerColor) {
             Arrays.sort(rows);
         } else {
             Arrays.sort(files);
         }
         /*
          * Initialize chess board panel
-         * We'll use a Grid Layout here to mimic the grid of the board
+         * Game uses a Grid Layout here to mimic the grid of the board
          */
         boardPanel = new JPanel(new GridLayout(8, 8));
         // Declare and add the Squares of the chess board to the board panel
@@ -176,34 +172,34 @@ public class Game extends JFrame {
             for (int j = 0; j < BOARD_SIZE; j++) { // eight pieces per row
                 Piece pc;
                 if (i == 1 || i == 2) {
-                    pc = new Pawn(color, isPlayerWhite);
+                    pc = new Pawn(color, playerColor);
                 } else {
                     switch (j) { // initialize pieces based on their starting positions
                         case 0:
                         case 7:
-                            pc = new Rook(color, isPlayerWhite);
+                            pc = new Rook(color, playerColor);
                             break;
                         case 1:
                         case 6:
-                            pc = new Knight(color, isPlayerWhite);
+                            pc = new Knight(color, playerColor);
                             break;
                         case 2:
                         case 5:
-                            pc = new Bishop(color, isPlayerWhite);
+                            pc = new Bishop(color, playerColor);
                             break;
                         case 3:
-                            pc = new Queen(color, isPlayerWhite);
+                            pc = new Queen(color, playerColor);
                             break;
                         case 4:
-                            pc = new King(color, isPlayerWhite);
+                            pc = new King(color, playerColor);
                             break;
                         default:
-                            pc = new Pawn(color, isPlayerWhite);
+                            pc = new Pawn(color, playerColor);
                             break;
                     }
                 }
                 if (i > 1) { 
-                    if (isPlayerWhite) {
+                    if (playerColor) {
                         // Player is white, so add the white pieces to the bottom of the board
                         squares[i+4][j].add(pc);
                         squares[i+4][j].setPiece(pc);
@@ -228,7 +224,7 @@ public class Game extends JFrame {
                         pcs[1][8+j] = pc;
                     }
                 } else { 
-                    if (isPlayerWhite) {
+                    if (playerColor) {
                         // Player is white, so add the black pieces to the top of the board
                         squares[i][j].add(pc);
                         squares[i][j].setPiece(pc);
@@ -308,11 +304,10 @@ public class Game extends JFrame {
     public boolean isInCheck(boolean color, Square[][] squares, Piece[][] pcs) {
         Piece currPiece;
         /*
-         * Loop through all the pieces to see if any are attacking
-         * the King.
+         * Loop through all of the opposing pieces to see if any are attacking the King.
          */
-        for (int i = 0; i < 16; i++) {
-            if (!turn) {
+        for (int i = 0; i < pcs.length; i++) {
+            if (color) {
                 currPiece = pcs[0][i];
             } else {
                 currPiece = pcs[1][i];
@@ -366,7 +361,7 @@ public class Game extends JFrame {
             } else if (prevPiece.getColor() == turn && prevPiece.move(squares[prevRow][prevCol], squares[row][col], squares)) {
                 if (isInCheck(turn, squares, pcs)) { // this move puts the King in check
                     prevPiece.move(squares[row][col], squares[prevRow][prevCol], squares); // move the piece back
-                    System.out.println("Sorry, that piece cannot move there because it causes a chec. Try a different move.");
+                    System.out.println("Sorry, that piece cannot move there because it causes a check. Try a different move.");
                 } else {
                     System.out.println("Mouse clicked square at "  + files[col] + rows[row]); 
                     squares[prevRow][prevCol].remove(prevPiece);

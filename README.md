@@ -1,6 +1,6 @@
 # Chess
 
-A Java-based chess game implemented using the Swing library for the GUI. The project is built using Maven for dependency management and build automation.
+A Java-based chess game implemented using the Swing library for the GUI. The project is built using Maven for dependency management and build automation. Originally developed for a Advanced Java and OOP college course. 
 
 ## Features
 

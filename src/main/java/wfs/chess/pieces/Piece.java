@@ -50,17 +50,16 @@ public abstract class Piece extends JLabel {
         return isWhite;
     }
     /*
-     * Basic move function that is applicable for all pieces. Take in starting square, 
-     * destination square, and 2D array of squares representing the board. Moving from 
-     * the current square to the current square is not a valid move. A piece also cannot 
-     * move to a square that has a piece of the same color on it. 
+     * Basic check function for valid moves. Applicable for all pieces. Takes in
+     * starting square, destination square, and 2D array of squares representing the board.
+     * Moving from the current square to the current square is not a valid move. A piece
+     * also cannot move to a square that has a piece of the same color on it. 
      * 
      * Children classes call this function to check basic requirements for a move, and
      * then have further specifications to check if the move is valid for that particular
      * piece.
      */
-
-    public boolean move(Square start, Square dest, Square[][] squares) {
+    public boolean isMove(Square start, Square dest, Square[][] squares) {
         if (start.equals(dest)) {
             return false;
         }
@@ -71,6 +70,22 @@ public abstract class Piece extends JLabel {
         } else {
             return true;
         }
+        
+    }
+    /*
+     * Move piece from one square to another.  
+     */
+    public boolean makeMove(Square start, Square dest) {
+        if (dest.getPiece() == null) { // if destination square is empty, move there
+            dest.setPiece(this);
+            start.setPiece(null);
+            return true;
+        } else { // otherwise take the piece on the destination square
+            kill(dest.getPiece(), dest);
+            dest.setPiece(this);
+            start.setPiece(null);
+            return true;
+        } 
     }
     /*
      * kill function to kill/take opposing pieces, if valid move.
@@ -85,4 +100,8 @@ public abstract class Piece extends JLabel {
      * Used to see if that King is in check/checkmate.
      */
     public abstract boolean isAttackingKing(Square[][] squares);
+    /*
+     * 
+     */
+    public abstract boolean move(Square start, Square dest, Square[][] squares);
 }

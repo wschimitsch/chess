@@ -32,9 +32,18 @@ public class Bishop extends Piece {
      */
     @Override
     public boolean move(Square start, Square dest, Square[][] squares) {
-        if (!super.move(start, dest, squares)) { // check basic move requirements
+        if (!isMove(start, dest, squares)) { // check basic move requirements
             return false;
         } 
+        return this.makeMove(start, dest);
+    }
+
+    @Override
+    public boolean isMove(Square start, Square dest, Square[][] squares) {
+        if (!super.isMove(start, dest, squares)) {
+            return false;
+        }
+
         int x1 = start.px, x2 = dest.px;
         int y1 = start.py, y2 = dest.py;
         if (Math.abs(y2-y1) != Math.abs(x2-x1)) { // if the destination square is not on a diagonal from the starting square, this is an invalid Bishop move
@@ -57,19 +66,10 @@ public class Bishop extends Piece {
                 j--;
             }
         }
-        if (dest.getPiece() == null) { // if destination square is empty, move there
-            dest.setPiece(this);
-            start.setPiece(null);
-            return true;
-        } else { // otherwise take the piece on the destination square
-            kill(dest.getPiece(), dest);
-            dest.setPiece(this);
-            start.setPiece(null);
-            return true;
-        } 
+        return true;
     }
     /*
-     * Bishop threatens pieces on its diagonals.
+     * A bishop threatens pieces on its diagonals.
      */
     @Override
     public boolean isAttackingKing(Square[][] squares) {

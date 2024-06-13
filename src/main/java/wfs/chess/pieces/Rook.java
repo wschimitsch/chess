@@ -36,9 +36,17 @@ public class Rook extends Piece {
      */
     @Override
     public boolean move(Square start, Square dest, Square[][] squares) {
-        if (!super.move(start, dest, squares)) { // check basic move requirements
+        if (!isMove(start, dest, squares)) { // check basic move requirements
             return false;
         } 
+        return this.makeMove(start, dest);
+    }
+
+    @Override
+    public boolean isMove(Square start, Square dest, Square[][] squares) {
+        if (!super.isMove(start, dest, squares)) {
+            return false;
+        }
         int x1 = start.px, x2 = dest.px;
         int y1 = start.py, y2 = dest.py;
         if (x1 != x2 && y1 != y2) { // if destination square is not on the same file or same row, this is an invalid Rook move
@@ -68,18 +76,7 @@ public class Rook extends Piece {
                 }
             }           
         }
-        if (dest.getPiece() == null) { // if destination square is empty, move there
-            dest.setPiece(this);
-            start.setPiece(null);
-            hasMoved = true;
-            return true;
-        } else { // otherwise take the piece on the destination square 
-            kill(dest.getPiece(), dest);
-            dest.setPiece(this);
-            start.setPiece(null);
-            hasMoved = true;
-            return true;
-        } 
+        return true;
     }
     /*
      * Rook threatens pieces on the same row and file as it. 

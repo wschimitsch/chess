@@ -32,9 +32,16 @@ public class Queen extends Piece {
      */
     @Override
     public boolean move(Square start, Square dest, Square[][] squares) {
-        if (!super.move(start, dest, squares)) { // check for basic move requirements
+        if (!isMove(start, dest, squares)) { // check for basic move requirements
             return false;
         } 
+        return this.makeMove(start, dest);
+    }
+    @Override
+    public boolean isMove(Square start, Square dest, Square[][] squares) {
+        if(!super.isMove(start, dest, squares)){
+            return false;
+        }
         int x1 = start.px, x2 = dest.px;
         int y1 = start.py, y2 = dest.py;
         if ((x1 != x2) && (y1 != y2) && (Math.abs(y2-y1) != Math.abs(x2-x1))) { // not a valid Queen move, i.e. not a horizontal, vertical, or diagonal move
@@ -81,16 +88,7 @@ public class Queen extends Piece {
                 }
             }
         }
-        if (dest.getPiece() == null) { // if destination square is empty, move to it
-            dest.setPiece(this);
-            start.setPiece(null);
-            return true;
-        } else { // if destination square is occupied, take the piece on it
-            kill(dest.getPiece(), dest);
-            dest.setPiece(this);
-            start.setPiece(null);
-            return true;
-        }    
+        return true;
     }
     /*
      * Queen can threaten pieces horizontally, vertically, and diagonally from it.

@@ -32,22 +32,21 @@ public class Knight extends Piece {
      */
     @Override
     public boolean move(Square start, Square dest, Square[][] squares) {
-        if (!super.move(start, dest, squares)) { // check for basic move requirements
+        if (!isMove(start, dest, squares)) { // check for basic move requirements
             return false;
         } 
-        if (Math.abs(start.px-dest.px) * Math.abs(start.py-dest.py) != 2) { // if invalid Knight move
+        return this.makeMove(start, dest); 
+    }
+
+    @Override
+    public boolean isMove(Square start, Square dest, Square[][] squares) {
+        if (!super.isMove(start, dest, squares)) {
             return false;
         }
-        if (dest.getPiece() == null) { // destination square is empty, so move there
-            dest.setPiece(this);
-            start.setPiece(null);
-            return true;
-        } else { // destination square has opposing piece, so take it
-            kill(dest.getPiece(), dest);
-            dest.setPiece(this);
-            start.setPiece(null);
-            return true;
-        }     
+        if (Math.abs(start.px-dest.px) * Math.abs(start.py-dest.py) != 2) { 
+            return false;
+        }
+        return true;
     }
     /*
      * Knight threatens squares that are an 'L' shape away from it.

@@ -15,8 +15,7 @@ public class Pawn extends Piece {
     /*
      * Pawn can move 2 squares forward on first move, so keep track of if this Pawn has moved yet.
      */
-    private boolean hasMoved = false;
-    private int increment;
+    private int increment = 2;
     /*
      * Pawn constructor. Calls parent Piece constructor and sets the display image.
      */
@@ -36,39 +35,35 @@ public class Pawn extends Piece {
      */
     @Override
     public boolean move(Square start, Square dest, Square[][] squares) {
-        if (!super.move(start, dest, squares)) { // check for basic move requirements
+        if (!isMove(start, dest, squares)) { // check for basic move requirements
             return false;
         } 
-        if (hasMoved) { // if this pawn moved already, we can only move forward one space
-            increment = 1;
-        } else { // otherwise we have the option to move two spaces
-            increment = 2;
+        increment = 1;
+        return this.makeMove(start, dest);
+        
+    }
+    @Override
+    public boolean isMove(Square start, Square dest, Square[][] squares) {
+        if (!super.isMove(start, dest, squares)) {
+            return false;
         }
+
         if ((isPlayerPiece && (dest.py+increment < start.py || start.py < dest.py)) || (!isPlayerPiece && (dest.py-increment > start.py || start.py > dest.py))) { // if invalid pawn move
             return false;
         }
+        // Pawn must be moving forward if moving to an empty square
         if (dest.getPiece() == null) {
-            if (start.px != dest.px) { // if moving to an empty square, pawn must be moving forward
+            if (start.px != dest.px) { 
                 return false;
             }
-            // Prevent pawn from jumping over other pieces
-            if (increment == 2 && ((isPlayerPiece && squares[start.py-1][start.px].getPiece() != null) || (!isPlayerPiece && squares[start.py+1][start.px].getPiece() != null))) { 
-                return false;
-            }
-            dest.setPiece(this);
-            start.setPiece(null);
-            hasMoved = true;
-            return true;
-        } else {
-            if (start.px == dest.px) { // if moving to an occupied square, pawn must be moving diagonally
-                return false;
-            }
-            kill(dest.getPiece(), dest); // take the piece on the destination square
-            dest.setPiece(this);
-            start.setPiece(null);
-            hasMoved = true;
-            return true;
-        }    
+        } else if (start.px == dest.px) { // If moving to an occupied square, pawn must be moving diagonally
+            return false;
+        }
+        // Prevent pawn from jumping over other pieces
+        if (increment == 2 && ((isPlayerPiece && squares[start.py-1][start.px].getPiece() != null) || (!isPlayerPiece && squares[start.py+1][start.px].getPiece() != null))) { 
+            return false;
+        }
+        return true;
     }
     /*
      * Pawn threatens squares on its front diagonals.
