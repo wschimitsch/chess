@@ -26,25 +26,22 @@
  * ----------------------------------------------------
  * 
  * Displays chess board and pieces, while also implementing piece 
- * moving functionality with custom MouseListener class MoveListener.
+ * moving functionality with custom MouseListener class 'MoveListener.'
  * User can click (not drag) from square to square to move pieces.
  * Game is won either when a player is in checkmate (not yet 
  * implemented) or when a player runs out of time.
  *-----------------------------------------------------------*/
 package wfs.chess.board;
+import wfs.chess.pieces.*;
 
 import javax.swing.*;
-
 import java.awt.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
+import java.util.ArrayList;
 import java.util.Arrays;
-
-import wfs.chess.pieces.*;
 
 public class Game extends JFrame {
     /*
@@ -52,7 +49,7 @@ public class Game extends JFrame {
      */
     private final int BOARD_SIZE = 8;
     /*
-     * Array to hold the pieces on the board.
+     * Action listener to detect user input for in-game moves. 
      */
     private MoveListener ml;
     /*
@@ -72,9 +69,11 @@ public class Game extends JFrame {
     private JLabel whiteWinLabel;
     private JLabel blackWinLabel; 
     /*
-     * Array to hold the squares on the board.
+     * Array to hold the squares on the board. Note: the squares appear from top to bottom.
+     * So squares[0][0] is the upper left corner of the board and squares[7][7] is the
+     * bottom right.
      */
-    private Square squares[][];
+    private Square squares[][] = new Square[BOARD_SIZE][BOARD_SIZE];;
     /*
      * JPanel to hold the chess board.
      */
@@ -107,21 +106,23 @@ public class Game extends JFrame {
      */
     private char rows[] = {'8', '7', '6', '5', '4', '3', '2', '1'};
     /*
-     * Array to hold the pieces on the board.
+     * ArrayList to hold the pieces on the board. Note: first row of array contains the 
+     * black pieces, second row contains the white pieces. 
      */
-    private Piece pcs[][];
+    private ArrayList<Piece> pieces = new ArrayList<>();
     /*
      * Board colors
      */
     private Color lb = new Color(255, 204, 153);
     private Color db = new Color(153, 76, 10);
     private Color dg = new Color(64, 64, 64);
+
     /*
      * Game constructor. Takes in the color of the (main) player and the 
      * length of the game (for each player). Initializes game frame and 
      * the chessboard display. 
      */
-    public Game (boolean playerColor, int gameLength) {
+    public Game(boolean playerColor, int gameLength) {
         /*
          * Initialize Game properties:
          *      Border Layout Manager
@@ -131,11 +132,11 @@ public class Game extends JFrame {
         setAlwaysOnTop(true);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(true);
+        setResizable(false);
         // Set the Game icon
         ImageIcon icon = new ImageIcon(getClass().getResource("/img/chess.png"));
         setIconImage(icon.getImage());
-        // Initialize the player color
+        // Arrange the board display based on the player's color
         if (!playerColor) {
             Arrays.sort(rows);
         } else {
@@ -146,52 +147,47 @@ public class Game extends JFrame {
          * Game uses a Grid Layout here to mimic the grid of the board
          */
         boardPanel = new JPanel(new GridLayout(8, 8));
-        // Declare and add the Squares of the chess board to the board panel
+        // Add the Squares of the chess board to the board panel
         boolean dark = false;
-        squares = new Square[BOARD_SIZE][BOARD_SIZE];
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
-                squares[x][y] = new Square(y, x);
-                if (dark) {
-                    squares[x][y].setBackground(db);
-                } else {
-                    squares[x][y].setBackground(lb);
-                }
+                squares[x][y] = new Square(y, x); 
+                Color brown = (dark) ? db : lb; // color each square different than the last one
+                squares[x][y].setBackground(brown);
                 boardPanel.add(squares[x][y]);    // add this square to the game frame
-                dark = !dark;
+                dark = !dark; 
             }
             dark = !dark; 
         }
-        // Declare and add the pieces to the board
-        pcs = new Piece[2][2*BOARD_SIZE];
+        // Add the pieces to the board
         boolean color = false;
         for (int i = 0; i < 4; i++) { // four rows of pieces
-            if (i > 1) {
+            if (i > 1) { // first 2 rows initialized are the black pieces, next 2 are the white
                 color = true;
             }
             for (int j = 0; j < BOARD_SIZE; j++) { // eight pieces per row
                 Piece pc;
-                if (i == 1 || i == 2) {
+                if (i == 1 || i == 2) { // rows of pawns
                     pc = new Pawn(color, playerColor);
                 } else {
                     switch (j) { // initialize pieces based on their starting positions
                         case 0:
                         case 7:
-                            pc = new Rook(color, playerColor);
+                            pc = new Rook(color);
                             break;
                         case 1:
                         case 6:
-                            pc = new Knight(color, playerColor);
+                            pc = new Knight(color);
                             break;
                         case 2:
                         case 5:
-                            pc = new Bishop(color, playerColor);
+                            pc = new Bishop(color);
                             break;
                         case 3:
-                            pc = new Queen(color, playerColor);
+                            pc = new Queen(color);
                             break;
                         case 4:
-                            pc = new King(color, playerColor);
+                            pc = new King(color);
                             break;
                         default:
                             pc = new Pawn(color, playerColor);
@@ -218,11 +214,7 @@ public class Game extends JFrame {
                         
                     }
                     // Add piece to array of pieces
-                    if (i == 2) {
-                        pcs[1][j] = pc;
-                    } else {
-                        pcs[1][8+j] = pc;
-                    }
+                    pieces.add(pc);
                 } else { 
                     if (playerColor) {
                         // Player is white, so add the black pieces to the top of the board
@@ -230,7 +222,7 @@ public class Game extends JFrame {
                         squares[i][j].setPiece(pc);
                         pc.setSquare(squares[i][j]);
                     } else {
-                        // Player is black, so add the black pieces to the top of the board
+                        // Player is black, so add the black pieces to the bottom of the board
                         if (i == 1) {
                             squares[6][j].add(pc);
                             squares[6][j].setPiece(pc);
@@ -242,21 +234,17 @@ public class Game extends JFrame {
                         }
                     }
                     // Add piece to array of pieces
-                    if (i == 0) {
-                        pcs[0][j] = pc;
-                    } else {
-                        pcs[0][8+j] = pc;
-                    }
+                    pieces.add(pc);
                 }
     
             }
         }
-        // Add the board to our Game frame
+        // Add the board above to our Game frame
         add(boardPanel, BorderLayout.CENTER);
-        // Add a custom Move Listener to take mouse input from user for moves
+        // Add a custom Move Listener to take mouse input from user for chess moves
         ml = new MoveListener();
         boardPanel.addMouseListener(ml);
-        // Display the timers for both players
+        // Initialize and declare space and labels for timers
         String timerDisplay = String.format("%02d:%02d", gameLength, 0);
         whiteTimerLabel = new JLabel(timerDisplay);
         whitePanel = new JPanel();
@@ -267,16 +255,13 @@ public class Game extends JFrame {
         blackPanel = new JPanel();
         blackPanel.add(blackTimerLabel);
         blackPanel.setBackground(Color.BLACK);
-
+        // Add timers to the Game Frame
         whiteTimer = new Timer(1000, new TimerListener(gameLength * 60 * 1000, whiteTimerLabel));
         blackTimer = new Timer(1000, new TimerListener(gameLength * 60 * 1000, blackTimerLabel));
-
         timerPanel = new JPanel();
-        
         timerPanel.add(whitePanel);
         timerPanel.add(blackPanel);
         timerPanel.setBackground(dg);
-  
         add(timerPanel, BorderLayout.SOUTH);
         // Create a border around the chess board
         northBorder = new JPanel();
@@ -288,36 +273,74 @@ public class Game extends JFrame {
         add(northBorder, BorderLayout.NORTH);
         add(eastBorder, BorderLayout.EAST);
         add(westBorder, BorderLayout.WEST);
-
+        // Size the frame so all components are at their preferred sizes
         pack();
-        setLocationRelativeTo(null); // lets the Game display at the center of the window
+        // Display the Game at the center of the window
+        setLocationRelativeTo(null); 
+    } // end Game constructor
 
-    }
-    /*
-     * TODO: Implement check functionality
+    /* Chess game functionality below:  
+     * Moving
+     * Check/Checkmate
+     * Timing
+     * TODO: Game Endings 
      * 
+     *----------------------------------------------------------------------
      * isInCheck function takes in the color of the player we are checking
      * and our 2D array of squares, i.e. the chess board, and our array of 
      * pieces. We will loop through every opposing piece to check if this 
      * King is being threatened.
      */
-    public boolean isInCheck(boolean color, Square[][] squares, Piece[][] pcs) {
-        Piece currPiece;
+    public boolean isInCheck(boolean color) {
         /*
          * Loop through all of the opposing pieces to see if any are attacking the King.
          */
-        for (int i = 0; i < pcs.length; i++) {
-            if (color) {
-                currPiece = pcs[0][i];
-            } else {
-                currPiece = pcs[1][i];
-            }
-            if (currPiece.isAttackingKing(squares)) {
+        for (Piece currPiece : pieces) {
+            if (currPiece.getColor() != color && currPiece.isAttackingKing(findKing(color), squares)) {
                 return true;
             }
         }
         return false;
     }
+    
+    /*
+     * Helper function for isInCheck. Searches the opponent's remaining pieces and 
+     * returns the King's position on the board. 
+     */
+    private Square findKing(boolean color) {
+        // Loop through every piece to find the King
+        for (Piece pc : pieces) {
+            if (pc instanceof King && pc.getColor() == color) {
+                return pc.getSquare();
+            }
+        }
+        return null;
+    }
+
+    /*
+     * causesCheck ensures that the move with the given piece and squares would not either cause a check
+     * or preserve an existing check. 
+     */
+    private boolean causesCheck(boolean color, Piece piece, Square start, Square dest, Square[][] squares) {
+        Piece killedPiece = (dest.getPiece() == null) ? null : dest.getPiece();
+        // Adjust the Game as if the move was made, check if that board would cause the player to be in check
+        dest.setPiece(piece);
+        start.setPiece(null);
+        piece.setSquare(dest);
+        if (killedPiece != null) {
+            pieces.removeIf(pc -> (pc.getId() == killedPiece.getId()));
+        }
+        boolean isCheck = isInCheck(color);
+        // Reset the Game to previous state since the move shouldn't be made yet
+        dest.setPiece(killedPiece);
+        start.setPiece(piece);
+        piece.setSquare(start);
+        if (killedPiece != null) {
+            pieces.add(killedPiece);
+        }       
+        return isCheck;
+    }
+
     /*
      * TODO: Implement checkmate functionality
      */
@@ -325,6 +348,7 @@ public class Game extends JFrame {
         gameOver = true;
         return true;
     }
+
     /*
      * MoveListener class to take in mouse input from user. Keeps track of 
      * the piece most recently clicked and implements functionality for 
@@ -333,12 +357,13 @@ public class Game extends JFrame {
     private class MoveListener implements MouseListener {
         // Initalize member variables to null/invalid
         // Previous piece is the piece we want to move
-        private Piece prevPiece = null;
-        private int prevRow = -1, prevCol = -1;
+        private Piece prevPiece = null, killedPiece = null;
+        private Square prevSquare = null, currSquare = null;
 
         public MoveListener () {
             super();        
         }
+
         /*
          * Respond to mouse click input. If we have already clicked a piece, then
          */
@@ -349,35 +374,33 @@ public class Game extends JFrame {
             }
             int col = e.getX()/74; // div by 74 since thats the preferred size of each square
             int row = e.getY()/74;
-
+            currSquare = squares[row][col];
+            
             if (prevPiece == null) {
-                prevPiece = squares[row][col].getPiece();
-                prevRow = row;
-                prevCol = col;
+                prevSquare = currSquare;
+                prevPiece = prevSquare.getPiece();
                 System.out.println("Mouse clicked square at "  + files[col] + rows[row]);
-        
-            } else if (isInCheck(turn, squares, pcs)) { // if the King is already in check
-                // TODO
-            } else if (prevPiece.getColor() == turn && prevPiece.move(squares[prevRow][prevCol], squares[row][col], squares)) {
-                if (isInCheck(turn, squares, pcs)) { // this move puts the King in check
-                    prevPiece.move(squares[row][col], squares[prevRow][prevCol], squares); // move the piece back
-                    System.out.println("Sorry, that piece cannot move there because it causes a check. Try a different move.");
+            } else if (prevPiece.getColor() == turn && prevPiece.isMove(prevSquare, currSquare, squares) && !causesCheck(turn, prevPiece, prevSquare, currSquare, squares)) {
+                killedPiece = currSquare.getPiece();
+                prevPiece.makeMove(prevSquare, currSquare, squares);
+                if (killedPiece != null) {
+                    currSquare.remove(killedPiece);
+                    pieces.removeIf(pc -> (pc.getId() == killedPiece.getId()));
+                }
+                prevSquare.remove(prevPiece);
+                currSquare.add(prevPiece);
+                System.out.println("Successfully moved to " + files[col] + rows[row]);
+                prevPiece = null;  
+                killedPiece = null;
+                turn = !turn;
+                if (turn) {
+                    blackTimer.stop();
+                    whiteTimer.start();
                 } else {
-                    System.out.println("Mouse clicked square at "  + files[col] + rows[row]); 
-                    squares[prevRow][prevCol].remove(prevPiece);
-                    squares[row][col].add(prevPiece);
-                    System.out.println("Successfully moved from " + files[prevCol] + rows[prevRow] + " to " + files[col] + rows[row]);
-                    prevPiece = null;  
-                    turn = !turn;
-                    if (turn) {
-                        blackTimer.stop();
-                        whiteTimer.start();
-                    } else {
-                        whiteTimer.stop();
-                        blackTimer.start();
-                    }
-                }                
-            } else if (prevPiece.getColor() != turn) {
+                    whiteTimer.stop();
+                    blackTimer.start();
+                }
+            } else if (prevPiece.getColor() != turn) { // player attempted moving during the opposing turn
                 if (turn) {
                     System.out.println("It is not black's turn!");
                 } else {
@@ -388,11 +411,13 @@ public class Game extends JFrame {
                 System.out.println("Sorry, that piece cannot move there. Try a different move.");
                 prevPiece = null;
             }
-            // Update our Game JFrame to display the moves made
+            
+            // Update the Game JFrame to display the moves made
             repaint();
         }
 
-        // We don't want to respond to these actions
+        // Don't respond any other actions
+        // TODO: drag and drop
         @Override
         public void mousePressed(MouseEvent e) {
             return;
@@ -412,12 +437,14 @@ public class Game extends JFrame {
         public void mouseExited(MouseEvent e) {
             return;
         }
-    }
+    } // end MoveListener class
 
     /*
      * TimerListener class used for player game clock functionality.
      * When counting, these clocks count down from the set game time.
      * If the timer hits 0 for a player, that player loses automatically. 
+     * 
+     * TODO: clean up
      */
     private class TimerListener implements ActionListener {
         private int remainingTime;
@@ -477,5 +504,5 @@ public class Game extends JFrame {
                 }
             }
         }
-    }
-} // end of Game class
+    } // end TimerListener class
+} // end Game class

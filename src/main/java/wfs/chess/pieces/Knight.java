@@ -12,11 +12,12 @@ import javax.swing.ImageIcon;
 import wfs.chess.board.Square;
 
 public class Knight extends Piece {
+
     /*
      * Knight constructor. Calls parent Piece constructor and sets the display image.
      */
-    public Knight(boolean white, boolean playerColor) {
-        super(white, playerColor); // call parent constructor
+    public Knight(boolean white) {
+        super(white); // call parent constructor
         if (white) { // set display image based on piece color
             icon = new ImageIcon(getClass().getResource("/img/w_knight.png"));
         } else {
@@ -26,34 +27,26 @@ public class Knight extends Piece {
         icon = new ImageIcon(curr);
         this.setIcon(icon);
     }
+    
     /*
-     * move function for Knight. Knight can move in an 'L' shape, i.e. 2 squares right and one up.
-     * The Knight is allowed to 'jump' over pieces.
+     * isMove validates that a move between the given squares is valid with a knight. 
      */
-    @Override
-    public boolean move(Square start, Square dest, Square[][] squares) {
-        if (!isMove(start, dest, squares)) { // check for basic move requirements
-            return false;
-        } 
-        return this.makeMove(start, dest); 
-    }
-
     @Override
     public boolean isMove(Square start, Square dest, Square[][] squares) {
         if (!super.isMove(start, dest, squares)) {
             return false;
         }
-        if (Math.abs(start.px-dest.px) * Math.abs(start.py-dest.py) != 2) { 
+        if (Math.abs(start.getSquareX()-dest.getSquareX()) * Math.abs(start.getSquareY()-dest.getSquareY()) != 2) { 
             return false;
         }
         return true;
     }
+
     /*
      * Knight threatens squares that are an 'L' shape away from it.
      */
     @Override
-    public boolean isAttackingKing(Square[][] squares) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean isAttackingKing(Square kingSquare, Square[][] squares) {
+        return isMove(this.position, kingSquare, squares);
     }
 }

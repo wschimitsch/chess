@@ -25,49 +25,68 @@ public class Square extends JPanel {
      * Coordinates of the square. Visually, x represents the column of the square while
      * y represents the row of square, with respect to the chessboard.
      */
-    public int px; 
-    public int py;    
+    private int x; 
+    private int y;  
+
     /*
      * Square constuctor. Initialize piece to null (empty square) and set the coordinates
      * based on function arguments. 
      */
     public Square(int x, int y) {
-        this.pc = null;
-        this.px = x;
-        this.py = y;
+        pc = null;
+        this.x = x;
+        this.y = y;
     }
+    
     /*
      * getPiece function to return the piece on this square. 
      */
     public Piece getPiece() {
         return pc;
     }
+
     /*
      * setPiece function to set/change the piece on this square.
      */
     public void setPiece(Piece pc) {
         this.pc = pc;
     }
+
+    /*
+     * getSquareX function to return the square's x position. 
+     */
+    public int getSquareX() {
+        return x;
+    }
+
+    /*
+     * getSquareY function to return the square's y position. 
+     */
+    public int getSquareY() {
+        return y;
+    }
+
     /*
      * equals function to compare different Square objects.
      */
     public boolean equals(Square sq) {
-        if (this.px == sq.px && this.py == sq.py) {
+        if (this.x == sq.getSquareX() && this.y == sq.getSquareY()) {
             return true;
         } else {
             return false;
         }
     }
+    
     /*
      * checkForKing function to enforce rule that Kings cannot move next to each other.
      */
-    public boolean checkForKing(Square[][] squares, int x, int y) {
+    public boolean checkForKing(int x, int y, Square[][] squares) {
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-                if (py+i > 7 || py+i < 0 || px+j > 7 || px+j < 0|| (py+i == y && px+j == x)) { // ensure valid indices
+                if (y+i > 7 || y+i < 0 || x+j > 7 || x+j < 0|| (y+i == y && x+j == x)) { // ensure valid indices
                     continue;
                 }
-                if (squares[py+i][px+j].getPiece() instanceof King) { // check neighboring squares for a King
+                if (squares[y+i][x+j].getPiece() instanceof King) { // check neighboring squares for a King
                     return true;
                 }
             }

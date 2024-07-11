@@ -19,7 +19,7 @@ public class TitleScreen extends JFrame {
      * Title components.
      */
     private JLabel titleLabel;
-    private JPanel titlePanel;
+    private JPanel titlePanel; 
     /*
      * Button components for user input for game settings.
      */
@@ -170,7 +170,8 @@ public class TitleScreen extends JFrame {
 
         pack();
         setLocationRelativeTo(null); // display title screen in the center of the window
-    }
+    } // end TitleScreen constructor
+
     /*
      * Time Button Listener to record if and when the user selects
      * and/or changes game length settings.
@@ -187,7 +188,8 @@ public class TitleScreen extends JFrame {
             timeSelection = time;
             System.out.println("You chose a game length of " + time + " minutes per player.");
         }
-    }
+    } // end TimeBtnListener class
+
     /*
      * Color Button Listener to record if and when the user selects
      * and/or changes their (Player 1's) color.
@@ -209,7 +211,8 @@ public class TitleScreen extends JFrame {
                 System.out.println("You chose to play with the black pieces.");
             }
         }
-    }
+    } // end ColorBtnListener class
+    
     /*
      * Play Button Listener to start the chess game with the user's
      * current game setting selections.
@@ -232,5 +235,5 @@ public class TitleScreen extends JFrame {
             // Show the Game
             game.setVisible(true);  
         }
-    }
-} // end of TitleScreen class
+    } // end PlayBtnListener class
+} // end TitleScreen class
